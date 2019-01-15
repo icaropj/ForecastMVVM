@@ -8,6 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 
 import br.com.icaropinho.forecastmvvm.R
+import br.com.icaropinho.forecastmvvm.data.ApixuWeatherApiService
+import kotlinx.android.synthetic.main.current_weather_fragment.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class CurrentWeatherFragment : Fragment() {
 
@@ -26,8 +31,17 @@ class CurrentWeatherFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
         viewModel = ViewModelProviders.of(this).get(CurrentWeatherViewModel::class.java)
-        // TODO: Use the ViewModel
+
+        //TODO: Refactor to use ViewModel
+        val apiService = ApixuWeatherApiService()
+
+        //TODO: Specific scope for every fragment
+        GlobalScope.launch(Dispatchers.Main) {
+            val currentWeatherResponse = apiService.getCurrentWeather("London").await()
+            textView.text = currentWeatherResponse.currentWeatherEntry.toString()
+        }
     }
 
 }
