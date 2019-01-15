@@ -1,7 +1,8 @@
-package br.com.icaropinho.forecastmvvm
+package br.com.icaropinho.forecastmvvm.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import br.com.icaropinho.forecastmvvm.R
 
 class MainActivity : AppCompatActivity() {
 
