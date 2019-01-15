@@ -1,14 +1,16 @@
 package br.com.icaropinho.forecastmvvm.ui.weather.current
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import br.com.icaropinho.forecastmvvm.R
-import br.com.icaropinho.forecastmvvm.data.ApixuWeatherApiService
+import br.com.icaropinho.forecastmvvm.data.network.ApixuWeatherApiService
+import br.com.icaropinho.forecastmvvm.data.network.ConnectivityInterceptorImpl
+import br.com.icaropinho.forecastmvvm.data.network.WeatherNetworkDataSourceImpl
 import kotlinx.android.synthetic.main.current_weather_fragment.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -35,12 +37,16 @@ class CurrentWeatherFragment : Fragment() {
         viewModel = ViewModelProviders.of(this).get(CurrentWeatherViewModel::class.java)
 
         //TODO: Refactor to use ViewModel
-        val apiService = ApixuWeatherApiService()
+        val apiService = ApixuWeatherApiService(ConnectivityInterceptorImpl(this.context!!))
+        val weatherNetworkDataSource = WeatherNetworkDataSourceImpl(apiService)
+
+        weatherNetworkDataSource.downloadedCurrentWeahter.observe(this, Observer {
+            textView.text = it.currentWeatherEntry.toString()
+        })
 
         //TODO: Specific scope for every fragment
         GlobalScope.launch(Dispatchers.Main) {
-            val currentWeatherResponse = apiService.getCurrentWeather("London").await()
-            textView.text = currentWeatherResponse.currentWeatherEntry.toString()
+            weatherNetworkDataSource.fetchCurrentWeather("London", "en")
         }
     }
 
