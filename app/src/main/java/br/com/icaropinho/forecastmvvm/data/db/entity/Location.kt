@@ -1,4 +1,4 @@
-package br.com.icaropinho.forecastmvvm.data.response
+package br.com.icaropinho.forecastmvvm.data.db.entity
 
 import com.google.gson.annotations.SerializedName
 
